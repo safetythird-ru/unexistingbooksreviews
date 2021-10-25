@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "cross-env": "^5.1.4",
+    "prettier": "2.4.1",
     "react-scripts": "1.1.1"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
   "scripts": {
     "start": "cross-env PORT=4100 react-scripts start",
     "build": "react-scripts build",
+    "lint-check" : "npx prettier -c './**/*.[tj]s*'",
     "test": "cross-env PORT=4100 react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   }
