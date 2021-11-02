@@ -16,7 +16,7 @@ const mapDispatchToProps = dispatch => ({
   onUnload: () => dispatch({ type: REGISTER_PAGE_UNLOADED })
 });
 
-const Register = ({ onUnload, onChange, onSubmit, username, email, password, errors, inProgress }) => {
+const Register = ({ onUnload, onChange, onSubmit, username = '', email = '', password = '', errors, inProgress }) => {
   const submitForm = (username, email, password) => ev => {
     ev.preventDefault();
     onSubmit(username, email, password);
@@ -53,7 +53,7 @@ const Register = ({ onUnload, onChange, onSubmit, username, email, password, err
                     name='username'
                     type='text'
                     placeholder='Username'
-                    value={username || ''}
+                    value={username}
                     onChange={handleInputChange}
                   />
                 </fieldset>
@@ -64,7 +64,7 @@ const Register = ({ onUnload, onChange, onSubmit, username, email, password, err
                     name='email'
                     type='email'
                     placeholder='Email'
-                    value={email || ''}
+                    value={email}
                     onChange={handleInputChange}
                   />
                 </fieldset>
@@ -75,7 +75,7 @@ const Register = ({ onUnload, onChange, onSubmit, username, email, password, err
                     name='password'
                     type='password'
                     placeholder='Password'
-                    value={password || ''}
+                    value={password}
                     onChange={handleInputChange}
                   />
                 </fieldset>
