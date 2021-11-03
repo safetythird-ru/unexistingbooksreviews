@@ -1,5 +1,5 @@
 import ListErrors from './ListErrors';
-import React from 'react';
+import React, { useEffect } from 'react';
 import agent from '../agent';
 import { connect } from 'react-redux';
 import {
@@ -24,155 +24,152 @@ const mapDispatchToProps = dispatch => ({
     dispatch({ type: REMOVE_TAG, tag }),
   onSubmit: payload =>
     dispatch({ type: ARTICLE_SUBMITTED, payload }),
-  onUnload: payload =>
+  onUnload: _ =>
     dispatch({ type: EDITOR_PAGE_UNLOADED }),
   onUpdateField: (key, value) =>
     dispatch({ type: UPDATE_FIELD_EDITOR, key, value })
 });
 
-class Editor extends React.Component {
-  constructor() {
-    super();
+const Editor = (props) => {
+  const updateFieldEvent =
+    key => ev => props.onUpdateField(key, ev.target.value);
+  const changeTitle = updateFieldEvent('title');
+  const changeDescription = updateFieldEvent('description');
+  const changeBody = updateFieldEvent('body');
+  const changeTagInput = updateFieldEvent('tagInput');
 
-    const updateFieldEvent =
-      key => ev => this.props.onUpdateField(key, ev.target.value);
-    this.changeTitle = updateFieldEvent('title');
-    this.changeDescription = updateFieldEvent('description');
-    this.changeBody = updateFieldEvent('body');
-    this.changeTagInput = updateFieldEvent('tagInput');
-
-    this.watchForEnter = ev => {
-      if (ev.keyCode === 13) {
-        ev.preventDefault();
-        this.props.onAddTag();
-      }
-    };
-
-    this.removeTagHandler = tag => () => {
-      this.props.onRemoveTag(tag);
-    };
-
-    this.submitForm = ev => {
+  const watchForEnter = ev => {
+    if (ev.keyCode === 13) {
       ev.preventDefault();
-      const article = {
-        title: this.props.title,
-        description: this.props.description,
-        body: this.props.body,
-        tagList: this.props.tagList
-      };
+      props.onAddTag();
+    }
+  };
 
-      const slug = { slug: this.props.articleSlug };
-      const promise = this.props.articleSlug ?
-        agent.Articles.update(Object.assign(article, slug)) :
-        agent.Articles.create(article);
+  const removeTagHandler = tag => () => {
+    props.onRemoveTag(tag);
+  };
 
-      this.props.onSubmit(promise);
+  const submitForm = ev => {
+    ev.preventDefault();
+    const article = {
+      title: props.title,
+      description: props.description,
+      body: props.body,
+      tagList: props.tagList
     };
-  }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.match.params.slug !== nextProps.match.params.slug) {
-      if (nextProps.match.params.slug) {
-        this.props.onUnload();
-        return this.props.onLoad(agent.Articles.get(this.props.match.params.slug));
-      }
-      this.props.onLoad(null);
+    const slug = { slug: props.articleSlug };
+    const promise = props.articleSlug ?
+      agent.Articles.update(Object.assign(article, slug)) :
+      agent.Articles.create(article);
+
+    props.onSubmit(promise);
+  };
+  
+  useEffect(() => {
+    props.onUnload();
+    props.onLoad(agent.Articles.get(props.match.params.slug));
+  }, [props.match.params.slug]);
+
+  useEffect(() => {
+    console.debug(props.match.params.slug);
+    if (props.match.params.slug) {
+      return props.onLoad(agent.Articles.get(props.match.params.slug));
     }
-  }
+    props.onLoad(null);
+    return () => props.onUnload();
+  }, []);
 
-  componentWillMount() {
-    if (this.props.match.params.slug) {
-      return this.props.onLoad(agent.Articles.get(this.props.match.params.slug));
-    }
-    this.props.onLoad(null);
-  }
+  return (
+      <EditorForm errors={props.errors}>
+        <BiggerFieldInput value={props.title} placeholder="Article Title" onChange={changeTitle}/>
+        <FieldInput value={props.description} placeholder="What's this article about?" onChange={changeDescription}/>
+        <TextArea placeholder="Write your article (in markdown)" onChange={changeBody}>
+          {props.body}
+        </TextArea>
+        <FieldInput value={props.tagInput} placeholder="Enter tags" onChange={changeTagInput} onKeyUp={watchForEnter}>
+          <TagList tagList={props.tagList} removeTagHandler={removeTagHandler}/>
+        </FieldInput>
+        <Button disabled={props.inProgress} onClick={submitForm}/>
+      </EditorForm>
+  );
+}
 
-  componentWillUnmount() {
-    this.props.onUnload();
-  }
-
-  render() {
-    return (
-      <div className="editor-page">
-        <div className="container page">
-          <div className="row">
-            <div className="col-md-10 offset-md-1 col-xs-12">
-
-              <ListErrors errors={this.props.errors}></ListErrors>
-
-              <form>
-                <fieldset>
-
-                  <fieldset className="form-group">
-                    <input
-                      className="form-control form-control-lg"
-                      type="text"
-                      placeholder="Article Title"
-                      value={this.props.title}
-                      onChange={this.changeTitle} />
-                  </fieldset>
-
-                  <fieldset className="form-group">
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="What's this article about?"
-                      value={this.props.description}
-                      onChange={this.changeDescription} />
-                  </fieldset>
-
-                  <fieldset className="form-group">
-                    <textarea
-                      className="form-control"
-                      rows="8"
-                      placeholder="Write your article (in markdown)"
-                      value={this.props.body}
-                      onChange={this.changeBody}>
-                    </textarea>
-                  </fieldset>
-
-                  <fieldset className="form-group">
-                    <input
-                      className="form-control"
-                      type="text"
-                      placeholder="Enter tags"
-                      value={this.props.tagInput}
-                      onChange={this.changeTagInput}
-                      onKeyUp={this.watchForEnter} />
-
-                    <div className="tag-list">
-                      {
-                        (this.props.tagList || []).map(tag => {
-                          return (
-                            <span className="tag-default tag-pill" key={tag}>
-                              <i  className="ion-close-round"
-                                  onClick={this.removeTagHandler(tag)}>
-                              </i>
-                              {tag}
-                            </span>
-                          );
-                        })
-                      }
-                    </div>
-                  </fieldset>
-
-                  <button
-                    className="btn btn-lg pull-xs-right btn-primary"
-                    type="button"
-                    disabled={this.props.inProgress}
-                    onClick={this.submitForm}>
-                    Publish Article
-                  </button>
-
-                </fieldset>
-              </form>
-
-            </div>
-          </div>
+const EditorForm = ({errors, children}) => (
+  <div className="editor-page">
+    <div className="container page">
+      <div className="row">
+        <div className="col-md-10 offset-md-1 col-xs-12">
+          <ListErrors errors={errors}></ListErrors>
+          <form>
+            <fieldset>
+              { children }
+            </fieldset>
+          </form>
         </div>
       </div>
-    );
-  }
-}
+    </div>
+  </div>
+)
+
+const TextArea = ({children, placeholder, onChange}) => (
+  <fieldset className="form-group">
+    <textarea
+      className="form-control"
+      rows="8"
+      placeholder={placeholder}
+      value={children}
+      onChange={onChange}>
+    </textarea>
+  </fieldset>
+)
+
+const TagList = ({tagList, removeTagHandler}) => (
+  <div className="tag-list">
+    {(tagList || []).map(tag => <Tag removeTagHandler={removeTagHandler}>{tag}</Tag>)}
+  </div>
+)
+
+const Tag = ({children, removeTagHandler}) => (
+  <span className="tag-default tag-pill" key={children}>
+    <i className="ion-close-round" onClick={removeTagHandler(children)}/>
+    {children}
+  </span>
+)
+
+const FieldInput = ({placeholder, value, onChange, children, onKeyUp}) => (
+  <fieldset className="form-group">
+      <input
+        className="form-control"
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onKeyUp={onKeyUp}
+        onChange={onChange} />
+        {children}
+  </fieldset>
+)
+
+const BiggerFieldInput = ({placeholder, value, onChange, children}) => (
+  <fieldset className="form-group">
+      <input
+        className="form-control form-control-lg"
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange} />
+        {children}
+  </fieldset>
+)
+
+const Button = ({disabled, onClick}) => (
+  <button
+    className="btn btn-lg pull-xs-right btn-primary"
+    type="button"
+    disabled={disabled}
+    onClick={onClick}>
+    Publish Article
+  </button>
+)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Editor);
