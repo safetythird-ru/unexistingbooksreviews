@@ -1,25 +1,28 @@
 import { Link } from 'react-router-dom';
 import ListErrors from '../ListErrors';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import agent from '../../agent';
 import { connect } from 'react-redux';
-import { UPDATE_FIELD_AUTH, REGISTER, REGISTER_PAGE_UNLOADED } from '../../constants/actionTypes';
+import { REGISTER, REGISTER_PAGE_UNLOADED } from '../../constants/actionTypes';
 
 const mapStateToProps = state => ({ ...state.auth });
 
 const mapDispatchToProps = dispatch => ({
-  onChange: (name, value) => dispatch({ type: UPDATE_FIELD_AUTH, key: name, value }),
-  onSubmit: (username, email, password) => {
-    const payload = agent.Auth.register(username, email, password);
+  onSubmit: (data) => {
+    const payload = agent.Auth.register(data);
     dispatch({ type: REGISTER, payload });
   },
   onUnload: () => dispatch({ type: REGISTER_PAGE_UNLOADED })
 });
 
-const Register = ({ onUnload, onChange, onSubmit, username = '', email = '', password = '', errors, inProgress }) => {
-  const submitForm = (username, email, password) => ev => {
+const Register = ({ onUnload, onSubmit, errors, inProgress }) => {
+  const [data, setInputs] = useState({})
+
+  const onChange = (name, value) => setInputs({...data, [name]: value })
+
+  const submitForm = () => ev => {
     ev.preventDefault();
-    onSubmit(username, email, password);
+    onSubmit(data);
   };
 
   useEffect(() => {
@@ -45,7 +48,7 @@ const Register = ({ onUnload, onChange, onSubmit, username = '', email = '', pas
 
             <ListErrors errors={errors} />
 
-            <form onSubmit={submitForm(username, email, password)}>
+            <form onSubmit={submitForm(data)}>
               <fieldset>
                 <fieldset className='form-group'>
                   <input
@@ -53,7 +56,7 @@ const Register = ({ onUnload, onChange, onSubmit, username = '', email = '', pas
                     name='username'
                     type='text'
                     placeholder='Username'
-                    value={username}
+                    value={data.username || ''}
                     onChange={handleInputChange}
                   />
                 </fieldset>
@@ -64,7 +67,7 @@ const Register = ({ onUnload, onChange, onSubmit, username = '', email = '', pas
                     name='email'
                     type='email'
                     placeholder='Email'
-                    value={email}
+                    value={data.email || ''}
                     onChange={handleInputChange}
                   />
                 </fieldset>
@@ -75,7 +78,7 @@ const Register = ({ onUnload, onChange, onSubmit, username = '', email = '', pas
                     name='password'
                     type='password'
                     placeholder='Password'
-                    value={password}
+                    value={data.password || ''}
                     onChange={handleInputChange}
                   />
                 </fieldset>
