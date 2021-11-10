@@ -1,4 +1,4 @@
-import { Profile, mapStateToProps } from './Profile/Profile';
+import { Profile } from './Profile/Profile';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import agent from '../agent';
@@ -7,6 +7,12 @@ import {
   PROFILE_PAGE_LOADED,
   PROFILE_PAGE_UNLOADED
 } from '../constants/actionTypes';
+
+const mapStateToProps = state => ({
+  ...state.articleList,
+  currentUser: state.common.currentUser,
+  profile: state.profile
+});
 
 const mapDispatchToProps = dispatch => ({
   onLoad: (pager, payload) =>
