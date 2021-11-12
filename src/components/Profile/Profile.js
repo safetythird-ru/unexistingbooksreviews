@@ -6,9 +6,11 @@ import ArticleList from '../ArticleList';
 import { EditProfileSettings } from './EditProfileSettings';
 import { FollowUserButton } from './FollowUserButton';
 import { ProfileTabs } from './ProfileTabs';
+import { ProfileMain } from './ProfileMain';
 
 class Profile extends React.Component {
   componentWillMount() {
+    console.log(this.props)
     this.props.onLoad(Promise.all([agent.Profile.get(this.props.match.params.username), agent.Articles.byAuthor(this.props.match.params.username)]));
   }
 
@@ -26,6 +28,7 @@ class Profile extends React.Component {
 
     return (
       <div className='profile-page'>
+        <ProfileMain />
         <div className='user-info'>
           <div className='container'>
             <div className='row'>

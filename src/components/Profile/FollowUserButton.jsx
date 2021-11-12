@@ -1,20 +1,30 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+import agent from '../../agent';
+import { FOLLOW_USER, UNFOLLOW_USER } from '../../constants/actionTypes';
 
-export const FollowUserButton = props => {
+export const FollowUserButton = ({ user }) => {
+  const dispatch = useDispatch();
   const handleClick = ev => {
     ev.preventDefault();
-    if (props.user.following) {
-      props.unfollow(props.user.username);
+    if (user.following) {
+      dispatch({
+        type: UNFOLLOW_USER,
+        payload: agent.Profile.unfollow(user.username)
+      });
     } else {
-      props.follow(props.user.username);
+      dispatch({
+        type: FOLLOW_USER,
+        payload: agent.Profile.follow(user.username)
+      });
     }
   };
 
   return (
-    <button className={`btn btn-sm action-btn ${props.user.following ? 'btn-secondary' : 'btn-outline-secondary'}`} onClick={handleClick}>
+    <button className={`btn btn-sm action-btn ${user.following ? 'btn-secondary' : 'btn-outline-secondary'}`} onClick={handleClick}>
       <i className='ion-plus-round'></i>
       &nbsp;
-      {props.user.following ? 'Unfollow' : 'Follow'} {props.user.username}
+      {user.following ? 'Unfollow' : 'Follow'} {user.username}
     </button>
   );
 };
