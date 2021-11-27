@@ -1,9 +1,11 @@
 .container {
+    font-family: 'Tomorrow', sans-serif;
     display: flex;
     flex-direction: column;
 }
 
 .label {
+    font-family: inherit;
     color: inherit;
     font-size: 20px;
     line-height: 24px;
@@ -12,6 +14,7 @@
 }
 
 .error_message {
+    font-family: inherit;
     font-size: 18px;
     line-height: 22px;
     margin-left: 10px;
@@ -21,6 +24,7 @@
 
 /* Стиль непосредственно тегов input или textarea */
 .field {
+    font-family: inherit;
     color: inherit;
     background: rgba(200, 201, 189, 0.6);
     box-sizing: border-box;
@@ -37,10 +41,10 @@
     outline: none;
   }
   
-.field::-webkit-input-placeholder {color:#6B6761;}
-.field::-moz-placeholder          {color:#6B6761;}
-.field:-moz-placeholder           {color:#6B6761;}
-.field:-ms-input-placeholder      {color:#6B6761;}
+.field::-webkit-input-placeholder {color:#6B6761; font-family:'EB Garamond', serif;}
+.field::-moz-placeholder          {color:#6B6761; font-family:'EB Garamond', serif;}
+.field:-moz-placeholder           {color:#6B6761; font-family:'EB Garamond', serif;}
+.field:-ms-input-placeholder      {color:#6B6761; font-family:'EB Garamond', serif;}
 
 .field_error {
     border: 2px solid #E61A1A;
