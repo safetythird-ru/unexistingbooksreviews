@@ -1,0 +1,27 @@
+.input {
+    composes: field from '../field.module.css';
+    height: 40px;
+}
+
+.input_error {
+    composes: field_error from '../field.module.css';
+}
+
+.wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    margin-left: -40px;
+}
+
+.icon_error path{
+    stroke: #E51A1A;
+  }
+
+  .icon_disabled path{
+    stroke: #6B6761;
+  }
