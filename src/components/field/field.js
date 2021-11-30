@@ -7,7 +7,7 @@ const Field = ({ children, name, labelName, errorText }) => {
         {labelName}
       </label>
       {children}
-      <span className={field.error_message}>{errorText}</span>
+      {errorText && <span className={field.error_message}>{errorText}</span>}
     </div>
   );
 };
