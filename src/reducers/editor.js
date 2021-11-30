@@ -3,6 +3,7 @@ import {
   EDITOR_PAGE_UNLOADED,
   ARTICLE_SUBMITTED,
   ASYNC_START,
+  ASYNC_END,
   ADD_TAG,
   REMOVE_TAG,
   UPDATE_FIELD_EDITOR
@@ -33,6 +34,10 @@ export default (state = {}, action) => {
         return { ...state, inProgress: true };
       }
       break;
+    case ASYNC_END: {
+      return { ...state, inProgress: false };
+      break;
+    }
     case ADD_TAG:
       return {
         ...state,
