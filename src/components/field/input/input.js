@@ -5,7 +5,7 @@ import Field from '../field';
 
 const Input = ({ labelName, type, placeholder, onChange, name, value, disabled, errorText, icon, onIconClick }) => {
   const iconToRender = useMemo(() => {
-    const resIcon = icon ? icon : errorText ? excPoint : null;
+    const resIcon = icon ? icon : (errorText ? excPoint: null);
     return resIcon ? (
       <div
         className={`${input.icon} ${errorText && input.icon_error} ${disabled && input.icon_disabled}`}
