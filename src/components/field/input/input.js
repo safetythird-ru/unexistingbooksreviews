@@ -14,7 +14,7 @@ const Input = ({ labelName, type, placeholder, onChange, name, value, disabled, 
         {resIcon}
       </div>
     ) : null;
-  }, [icon, onIconClick]);
+  }, [icon, onIconClick, errorText]);
 
   return (
     <Field name={name} labelName={labelName} errorText={errorText}>
