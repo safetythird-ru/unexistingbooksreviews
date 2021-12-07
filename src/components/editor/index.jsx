@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import agent from '../../agent';
-import { connect } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   ADD_TAG,
   EDITOR_PAGE_LOADED,
@@ -11,29 +11,12 @@ import {
   UPDATE_FIELD_EDITOR
 } from '../../constants/actionTypes';
 import Form from './form';
-
-const mapStateToProps = state => ({
-  ...state.editor
-});
-
-const mapDispatchToProps = dispatch => ({
-  onAddTag: () =>
-    dispatch({ type: ADD_TAG }),
-  onLoad: payload =>
-    dispatch({ type: EDITOR_PAGE_LOADED, payload }),
-  onRemoveTag: tag =>
-    dispatch({ type: REMOVE_TAG, tag }),
-  onSubmit: payload =>
-    dispatch({ type: ARTICLE_SUBMITTED, payload }),
-  onUnload: _ =>
-    dispatch({ type: EDITOR_PAGE_UNLOADED }),
-  onUpdateField: (key, value) =>
-    dispatch({ type: UPDATE_FIELD_EDITOR, key, value })
-});
+import { useSelector } from 'react-redux';
 
 const Editor = (props) => {
-  const updateFieldEvent =
-    key => ev => props.onUpdateField(key, ev.target.value);
+  const dispatch = useDispatch();
+  const { articleSlug, body, description, tagInput, tagList, title } = useSelector(store => store.editor);
+  const updateFieldEvent = key => ev => dispatch({ type: UPDATE_FIELD_EDITOR, key, value: ev.target.value });
   const changeTitle = updateFieldEvent('title');
   const changeDescription = updateFieldEvent('description');
   const changeBody = updateFieldEvent('body');
@@ -42,54 +25,51 @@ const Editor = (props) => {
   const watchForEnter = ev => {
     if (ev.keyCode === 13) {
       ev.preventDefault();
-      props.onAddTag();
+      dispatch({ type: ADD_TAG });
     }
   };
 
   const removeTagHandler = tag => () => {
-    props.onRemoveTag(tag);
+    dispatch({ type: REMOVE_TAG, tag })
   };
 
   const submitForm = ev => {
     ev.preventDefault();
-    const article = {
-      title: props.title,
-      description: props.description,
-      body: props.body,
-      tagList: props.tagList
-    };
+    const article = { title, description, body, tagList };
 
-    const slug = { slug: props.articleSlug };
-    const promise = props.articleSlug ?
+    const slug = { slug: articleSlug };
+    const promise = articleSlug ?
       agent.Articles.update(Object.assign(article, slug)) :
       agent.Articles.create(article);
 
-    props.onSubmit(promise);
+    dispatch({ type: ARTICLE_SUBMITTED, payload: promise });
   };
   
   useEffect(() => {
-    props.onUnload();
-    props.onLoad(agent.Articles.get(props.match.params.slug));
+    dispatch({ type: EDITOR_PAGE_UNLOADED })
+    const payload = agent.Articles.get(props.match.params.slug);
+    dispatch({ type: EDITOR_PAGE_LOADED, payload });
   }, [props.match.params.slug]);
 
   useEffect(() => {
     console.debug(props.match.params.slug);
     if (props.match.params.slug) {
-      return props.onLoad(agent.Articles.get(props.match.params.slug));
+      const payload = agent.Articles.get(props.match.params.slug);
+      return dispatch({ type: EDITOR_PAGE_LOADED, payload });
     }
-    props.onLoad(null);
-    return () => props.onUnload();
+    dispatch({ type: EDITOR_PAGE_LOADED, payload: null });
+    return () => dispatch({ type: EDITOR_PAGE_UNLOADED })
   }, []);
 
   return (
       <Form errors={props.errors}>
-        <BiggerFieldInput value={props.title} placeholder="Article Title" onChange={changeTitle}/>
-        <FieldInput value={props.description} placeholder="What's this article about?" onChange={changeDescription}/>
+        <BiggerFieldInput value={title} placeholder="Article Title" onChange={changeTitle}/>
+        <FieldInput value={description} placeholder="What's this article about?" onChange={changeDescription}/>
         <TextArea placeholder="Write your article (in markdown)" onChange={changeBody}>
-          {props.body}
+          {body}
         </TextArea>
-        <FieldInput value={props.tagInput} placeholder="Enter tags" onChange={changeTagInput} onKeyUp={watchForEnter}>
-          <TagList tagList={props.tagList} removeTagHandler={removeTagHandler}/>
+        <FieldInput value={tagInput} placeholder="Enter tags" onChange={changeTagInput} onKeyUp={watchForEnter}>
+          <TagList tagList={tagList} removeTagHandler={removeTagHandler}/>
         </FieldInput>
         <Button disabled={props.inProgress} onClick={submitForm}/>
       </Form>
@@ -156,4 +136,4 @@ const Button = ({disabled, onClick}) => (
   </button>
 )
 
-export default connect(mapStateToProps, mapDispatchToProps)(Editor);
+export default Editor;
