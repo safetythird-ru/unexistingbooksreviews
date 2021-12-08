@@ -4,8 +4,7 @@ import {
   ARTICLE_SUBMITTED,
   ASYNC_START,
   ADD_TAG,
-  REMOVE_TAG,
-  UPDATE_FIELD_EDITOR
+  REMOVE_TAG
 } from '../constants/actionTypes';
 
 export default (state = {}, action) => {
@@ -26,6 +25,7 @@ export default (state = {}, action) => {
       return {
         ...state,
         inProgress: null,
+        ...action.article,
         errors: action.error ? action.payload.errors : null
       };
     case ASYNC_START:
@@ -44,8 +44,6 @@ export default (state = {}, action) => {
         ...state,
         tagList: state.tagList.filter(tag => tag !== action.tag)
       };
-    case UPDATE_FIELD_EDITOR:
-      return { ...state, [action.key]: action.value };
     default:
       return state;
   }

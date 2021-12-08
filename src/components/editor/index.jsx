@@ -6,40 +6,32 @@ import {
   ADD_TAG,
   EDITOR_PAGE_LOADED,
   ARTICLE_SUBMITTED,
-  EDITOR_PAGE_UNLOADED,
-  UPDATE_FIELD_EDITOR
+  EDITOR_PAGE_UNLOADED
 } from '../../constants/actionTypes';
 import Form from './form';
 import { useSelector } from 'react-redux';
-import { useFormik } from 'formik';
+import { Field, FormikProvider, useFormik } from 'formik';
 import TagList from './tag-list';
 
 const Editor = (props) => {
   const dispatch = useDispatch();
   const { articleSlug, body, description, tagInput, tagList, title } = useSelector(store => store.editor);
-  const updateFieldEvent = key => ev => dispatch({ type: UPDATE_FIELD_EDITOR, key, value: ev.target.value });
-  const changeTitle = updateFieldEvent('title');
-  const changeDescription = updateFieldEvent('description');
-  const changeBody = updateFieldEvent('body');
-  const changeTagInput = updateFieldEvent('tagInput');
 
   const formik = useFormik({
     initialValues: {
       title: '',
-      comment: '',
+      body: '',
       description: '',
       tags: ''
     },
-    onSubmit: values => {
-      console.log(values);
+    onSubmit: ({title, description, body, tagList}) => {
       const article = { title, description, body, tagList };
-
       const slug = { slug: articleSlug };
       const promise = articleSlug ?
         agent.Articles.update(Object.assign(article, slug)) :
         agent.Articles.create(article);
   
-      dispatch({ type: ARTICLE_SUBMITTED, payload: promise });
+      dispatch({ type: ARTICLE_SUBMITTED, payload: promise, article });
     }
   });
 
@@ -67,33 +59,26 @@ const Editor = (props) => {
   }, []);
 
   return (
+      <FormikProvider value={formik}>
       <Form errors={props.errors} onSubmit={formik.handleSubmit}>
         <BiggerFieldInput name="title" value={formik.values.title} placeholder="Article Title" onChange={formik.handleChange}/>
         <FieldInput name="description" value={formik.values.description} placeholder="What's this article about?" onChange={formik.handleChange}/>
-        <TextArea name="comment" placeholder="Write your article (in markdown)" onChange={formik.handleChange}>
-          {formik.values.comment}
-        </TextArea>
+        <FormFieldSet>
+          <Field  className="form-control"
+            rows="8"
+            value={formik.values.body}
+            name="body" component="textarea" placeholder="Write your article (in markdown)"/>
+        </FormFieldSet>
         <FieldInput name="tags" value={formik.values.tags} placeholder="Enter tags" onChange={formik.handleChange} onKeyUp={watchForEnter}>
           <TagList tags={tagList}/>
         </FieldInput>
         <Button disabled={props.inProgress}/>
       </Form>
+      </FormikProvider>
   );
 }
 
 const FormFieldSet = ({children}) => (<fieldset className="form-group">{children}</fieldset>)
-
-const TextArea = ({children, placeholder, onChange}) => (
-  <FormFieldSet>
-    <textarea
-      className="form-control"
-      rows="8"
-      placeholder={placeholder}
-      value={children}
-      onChange={onChange}>
-    </textarea>
-  </FormFieldSet>
-)
 
 const FieldInput = ({placeholder, name, value, onChange, children, onKeyUp}) => (
   <FormFieldSet>
