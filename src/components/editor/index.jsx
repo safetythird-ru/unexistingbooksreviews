@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { Field, FormikProvider, useFormik } from 'formik';
 import TagList from './tag-list';
 import PublishButton from './publish-button';
+import Input from '../field/input/input';
 
 const Editor = (props) => {
   const dispatch = useDispatch();
@@ -64,12 +65,9 @@ const Editor = (props) => {
       <Form errors={props.errors} onSubmit={formik.handleSubmit}>
         <BiggerFieldInput name="title" value={formik.values.title} placeholder="Article Title" onChange={formik.handleChange}/>
         <FieldInput name="description" value={formik.values.description} placeholder="What's this article about?" onChange={formik.handleChange}/>
-        <FormFieldSet>
-          <Field  className="form-control"
-            rows="8"
-            value={formik.values.body}
-            name="body" component="textarea" placeholder="Write your article (in markdown)"/>
-        </FormFieldSet>
+        <TextArea name="body" placeholder="Write your article (in markdown)">
+          {formik.values.body}
+        </TextArea>
         <FieldInput name="tags" value={formik.values.tags} placeholder="Enter tags" onChange={formik.handleChange} onKeyUp={watchForEnter}>
           <TagList tags={tagList}/>
         </FieldInput>
@@ -79,33 +77,26 @@ const Editor = (props) => {
   );
 }
 
+const TextArea = (props) => (
+  <FormFieldSet>
+    <Field
+      className="form-control"
+      {...props}
+      rows="8"
+      component="textarea"
+      />
+  </FormFieldSet>
+)
+
 const FormFieldSet = ({children}) => (<fieldset className="form-group">{children}</fieldset>)
 
-const FieldInput = ({placeholder, name, value, onChange, children, onKeyUp}) => (
+const FieldInput = ({placeholder, name, value, onChange, children}) => (
   <FormFieldSet>
-      <input
-        className="form-control"
-        type="text"
-        placeholder={placeholder}
-        name={name}
-        value={value}
-        onKeyUp={onKeyUp}
-        onChange={onChange} />
-        {children}
+    <Input placeholder={placeholder} name={name} value={value} onChange={onChange}/>
+    {children}
   </FormFieldSet>
 )
 
-const BiggerFieldInput = ({placeholder, name, value, onChange, children}) => (
-  <FormFieldSet>
-      <input
-        className="form-control form-control-lg"
-        name={name}
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange} />
-        {children}
-  </FormFieldSet>
-)
+const BiggerFieldInput = (props) => (<FieldInput {...props}/>)
 
 export default Editor;
