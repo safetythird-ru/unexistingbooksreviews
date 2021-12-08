@@ -25,8 +25,13 @@ const Editor = (props) => {
 
   const formik = useFormik({
     initialValues: {
+      title: '',
+      comment: '',
+      description: '',
+      tags: ''
     },
     onSubmit: values => {
+      console.log(values);
       const article = { title, description, body, tagList };
 
       const slug = { slug: articleSlug };
@@ -63,12 +68,12 @@ const Editor = (props) => {
 
   return (
       <Form errors={props.errors} onSubmit={formik.handleSubmit}>
-        <BiggerFieldInput value={title} placeholder="Article Title" onChange={changeTitle}/>
-        <FieldInput value={description} placeholder="What's this article about?" onChange={changeDescription}/>
-        <TextArea placeholder="Write your article (in markdown)" onChange={changeBody}>
-          {body}
+        <BiggerFieldInput name="title" value={formik.values.title} placeholder="Article Title" onChange={formik.handleChange}/>
+        <FieldInput name="description" value={formik.values.description} placeholder="What's this article about?" onChange={formik.handleChange}/>
+        <TextArea name="comment" placeholder="Write your article (in markdown)" onChange={formik.handleChange}>
+          {formik.values.comment}
         </TextArea>
-        <FieldInput value={tagInput} placeholder="Enter tags" onChange={changeTagInput} onKeyUp={watchForEnter}>
+        <FieldInput name="tags" value={formik.values.tags} placeholder="Enter tags" onChange={formik.handleChange} onKeyUp={watchForEnter}>
           <TagList tags={tagList}/>
         </FieldInput>
         <Button disabled={props.inProgress}/>
@@ -90,12 +95,13 @@ const TextArea = ({children, placeholder, onChange}) => (
   </FormFieldSet>
 )
 
-const FieldInput = ({placeholder, value, onChange, children, onKeyUp}) => (
+const FieldInput = ({placeholder, name, value, onChange, children, onKeyUp}) => (
   <FormFieldSet>
       <input
         className="form-control"
         type="text"
         placeholder={placeholder}
+        name={name}
         value={value}
         onKeyUp={onKeyUp}
         onChange={onChange} />
@@ -103,10 +109,11 @@ const FieldInput = ({placeholder, value, onChange, children, onKeyUp}) => (
   </FormFieldSet>
 )
 
-const BiggerFieldInput = ({placeholder, value, onChange, children}) => (
+const BiggerFieldInput = ({placeholder, name, value, onChange, children}) => (
   <FormFieldSet>
       <input
         className="form-control form-control-lg"
+        name={name}
         type="text"
         placeholder={placeholder}
         value={value}
