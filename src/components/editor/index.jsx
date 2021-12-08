@@ -12,10 +12,11 @@ import Form from './form';
 import { useSelector } from 'react-redux';
 import { Field, FormikProvider, useFormik } from 'formik';
 import TagList from './tag-list';
+import PublishButton from './publish-button';
 
 const Editor = (props) => {
   const dispatch = useDispatch();
-  const { articleSlug, body, description, tagInput, tagList, title } = useSelector(store => store.editor);
+  const { articleSlug, tagList } = useSelector(store => store.editor);
 
   const formik = useFormik({
     initialValues: {
@@ -72,7 +73,7 @@ const Editor = (props) => {
         <FieldInput name="tags" value={formik.values.tags} placeholder="Enter tags" onChange={formik.handleChange} onKeyUp={watchForEnter}>
           <TagList tags={tagList}/>
         </FieldInput>
-        <Button disabled={props.inProgress}/>
+        <PublishButton inProgress={props.inProgress}/>
       </Form>
       </FormikProvider>
   );
@@ -105,16 +106,6 @@ const BiggerFieldInput = ({placeholder, name, value, onChange, children}) => (
         onChange={onChange} />
         {children}
   </FormFieldSet>
-)
-
-const Button = ({disabled, onClick}) => (
-  <button
-    className="btn btn-lg pull-xs-right btn-primary"
-    type="submit"
-    disabled={disabled}
-    onClick={onClick}>
-    Publish Article
-  </button>
 )
 
 export default Editor;
