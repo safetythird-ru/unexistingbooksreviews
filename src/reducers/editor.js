@@ -7,7 +7,11 @@ import {
   REMOVE_TAG
 } from '../constants/actionTypes';
 
-export default (state = {}, action) => {
+const initState = {
+  tags: []
+}
+
+export default (state = initState, action) => {
   switch (action.type) {
     case EDITOR_PAGE_LOADED:
       return {
@@ -16,8 +20,7 @@ export default (state = {}, action) => {
         title: action.payload ? action.payload.article.title : '',
         description: action.payload ? action.payload.article.description : '',
         body: action.payload ? action.payload.article.body : '',
-        tagInput: '',
-        tagList: action.payload ? action.payload.article.tagList : []
+        tags: action.payload ? action.payload.article.tagList : []
       };
     case EDITOR_PAGE_UNLOADED:
       return {};
@@ -36,13 +39,12 @@ export default (state = {}, action) => {
     case ADD_TAG:
       return {
         ...state,
-        tagList: state.tagList.concat([state.tagInput]),
-        tagInput: ''
+        tags: state.tags.concat([action.tag]),
       };
     case REMOVE_TAG:
       return {
         ...state,
-        tagList: state.tagList.filter(tag => tag !== action.tag)
+        tags: state.tags.filter(tag => tag !== action.tag)
       };
     default:
       return state;

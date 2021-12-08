@@ -14,20 +14,21 @@ import { Field, FormikProvider, useFormik } from 'formik';
 import TagList from './tag-list';
 import PublishButton from './publish-button';
 import Input from '../field/input/input';
+import ButtonBase from '../button-base/button-base';
 
 const Editor = (props) => {
   const dispatch = useDispatch();
-  const { articleSlug, tagList } = useSelector(store => store.editor);
+  const { articleSlug } = useSelector(store => store.editor);
 
   const formik = useFormik({
     initialValues: {
       title: '',
       body: '',
       description: '',
-      tags: ''
+      tagInput: ''
     },
-    onSubmit: ({title, description, body, tagList}) => {
-      const article = { title, description, body, tagList };
+    onSubmit: ({title, description, body, tagInput}) => {
+      const article = { title, description, body, tagInput };
       const slug = { slug: articleSlug };
       const promise = articleSlug ?
         agent.Articles.update(Object.assign(article, slug)) :
@@ -37,11 +38,10 @@ const Editor = (props) => {
     }
   });
 
-  const watchForEnter = ev => {
-    if (ev.keyCode === 13) {
-      ev.preventDefault();
-      dispatch({ type: ADD_TAG });
-    }
+  const onAddTag = ev => {
+    ev.preventDefault();
+    formik.setFieldValue("tagInput", "")
+    dispatch({ type: ADD_TAG, tag: formik.values.tagInput});
   };
   
   useEffect(() => {
@@ -68,8 +68,9 @@ const Editor = (props) => {
         <TextArea name="body" placeholder="Write your article (in markdown)">
           {formik.values.body}
         </TextArea>
-        <FieldInput name="tags" value={formik.values.tags} placeholder="Enter tags" onChange={formik.handleChange} onKeyUp={watchForEnter}>
-          <TagList tags={tagList}/>
+        <FieldInput name="tagInput" value={formik.values.tagInput} placeholder="Enter tags" onChange={formik.handleChange} onKeyUp={onAddTag}>
+          <ButtonBase onClick={onAddTag}>Add tag</ButtonBase>
+          <TagList/>
         </FieldInput>
         <PublishButton inProgress={props.inProgress}/>
       </Form>
