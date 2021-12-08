@@ -76,8 +76,10 @@ const Editor = (props) => {
   );
 }
 
+const FormFieldSet = ({children}) => (<fieldset className="form-group">{children}</fieldset>)
+
 const TextArea = ({children, placeholder, onChange}) => (
-  <fieldset className="form-group">
+  <FormFieldSet>
     <textarea
       className="form-control"
       rows="8"
@@ -85,11 +87,11 @@ const TextArea = ({children, placeholder, onChange}) => (
       value={children}
       onChange={onChange}>
     </textarea>
-  </fieldset>
+  </FormFieldSet>
 )
 
 const FieldInput = ({placeholder, value, onChange, children, onKeyUp}) => (
-  <fieldset className="form-group">
+  <FormFieldSet>
       <input
         className="form-control"
         type="text"
@@ -98,11 +100,11 @@ const FieldInput = ({placeholder, value, onChange, children, onKeyUp}) => (
         onKeyUp={onKeyUp}
         onChange={onChange} />
         {children}
-  </fieldset>
+  </FormFieldSet>
 )
 
 const BiggerFieldInput = ({placeholder, value, onChange, children}) => (
-  <fieldset className="form-group">
+  <FormFieldSet>
       <input
         className="form-control form-control-lg"
         type="text"
@@ -110,7 +112,7 @@ const BiggerFieldInput = ({placeholder, value, onChange, children}) => (
         value={value}
         onChange={onChange} />
         {children}
-  </fieldset>
+  </FormFieldSet>
 )
 
 const Button = ({disabled, onClick}) => (
