@@ -10,7 +10,7 @@ const ButtonBase = ({ mixStyle, children, ...params }) => {
 };
 
 ButtonBase.propTypes = {
-  children: PropTypes.element.isRequired,
+  children: PropTypes.string.isRequired,
   mixStyle: PropTypes.string,
   params: PropTypes.object
 }
