@@ -23,7 +23,7 @@ const schema = yup.object().shape({
   description: yup.string().required()
 });
 
-const onSubmit = (articleSlug) => ({title, description, body, tagInput}, { setSubmitting }) => {
+const onSubmit = (articleSlug, dispatch) => ({title, description, body, tagInput}, { setSubmitting }) => {
   const article = { title, description, body, tagInput };
     
   const slug = { slug: articleSlug };
@@ -46,7 +46,7 @@ const Editor = (props) => {
       tagInput: ''
     },
     validationSchema: schema,
-    onSubmit: onSubmit(articleSlug)
+    onSubmit: onSubmit(articleSlug, dispatch)
   });
 
   const onAddTag = ev => {
