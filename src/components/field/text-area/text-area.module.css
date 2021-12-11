@@ -1,0 +1,11 @@
+.textarea {
+  composes: field from '../field.module.css';
+  height: 136px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  resize: none;
+}
+
+.textarea_error {
+  composes: field_error from '../field.module.css';
+}
