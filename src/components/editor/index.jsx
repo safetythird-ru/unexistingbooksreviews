@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import agent from '../../agent';
 import { useDispatch } from 'react-redux';
 import {
@@ -15,6 +15,24 @@ import TagList from './tag-list';
 import PublishButton from './publish-button';
 import Input from '../field/input/input';
 import ButtonBase from '../button-base/button-base';
+import * as yup from 'yup';
+
+const schema = yup.object().shape({
+  title: yup.string().required(),
+  body: yup.string().required(),
+  description: yup.string().required()
+});
+
+const onSubmit = (articleSlug) => ({title, description, body, tagInput}, { setSubmitting }) => {
+  const article = { title, description, body, tagInput };
+    
+  const slug = { slug: articleSlug };
+  const promise = articleSlug ? agent.Articles.update(Object.assign(article, slug)) : agent.Articles.create(article);
+
+  setSubmitting(true);
+  dispatch({ type: ARTICLE_SUBMITTED, payload: promise, article });
+  setSubmitting(false);
+}
 
 const Editor = (props) => {
   const dispatch = useDispatch();
@@ -27,15 +45,8 @@ const Editor = (props) => {
       description: '',
       tagInput: ''
     },
-    onSubmit: ({title, description, body, tagInput}) => {
-      const article = { title, description, body, tagInput };
-      const slug = { slug: articleSlug };
-      const promise = articleSlug ?
-        agent.Articles.update(Object.assign(article, slug)) :
-        agent.Articles.create(article);
-  
-      dispatch({ type: ARTICLE_SUBMITTED, payload: promise, article });
-    }
+    validationSchema: schema,
+    onSubmit: onSubmit(articleSlug)
   });
 
   const onAddTag = ev => {
@@ -62,7 +73,7 @@ const Editor = (props) => {
 
   return (
       <FormikProvider value={formik}>
-      <Form errors={props.errors} onSubmit={formik.handleSubmit}>
+      <Form errors={ props.errors ?  props.errors.concat(formik.errors): formik.errors } onSubmit={formik.handleSubmit}>
         <BiggerFieldInput name="title" value={formik.values.title} placeholder="Article Title" onChange={formik.handleChange}/>
         <FieldInput name="description" value={formik.values.description} placeholder="What's this article about?" onChange={formik.handleChange}/>
         <TextArea name="body" placeholder="Write your article (in markdown)">
