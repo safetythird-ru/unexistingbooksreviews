@@ -1,18 +1,14 @@
 import textArea from './text-area.module.css';
 import Field from '../field';
 
-const TextArea = ({ labelName, type, placeholder, onChange, name, value, disabled, errorText }) => {
-
+const TextArea = ({edited, labelName, name, errorText, ...props }) => {
+  const hasError = edited && errorText
   return (
-    <Field name={name} labelName={labelName} errorText={errorText}>
+    <Field name={name} labelName={labelName} errorText={errorText} hasError={hasError}>
         <textarea
-          className={`${textArea.textarea} ${errorText && textArea.textarea_error}`}
-          type={type}
+          className={`${textArea.textarea} ${hasError && textArea.textarea_error}`}
           name={name}
-          placeholder={placeholder}
-          disabled={disabled}
-          onChange={onChange}
-          value={value}
+          {...props}
         />
     </Field>
   );
