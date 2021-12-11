@@ -3,12 +3,13 @@ import input from './input.module.css';
 import { useMemo } from 'react';
 import Field from '../field';
 
-const Input = ({ labelName, type, placeholder, onChange, name, value, disabled, errorText, icon, onIconClick }) => {
+const Input = ({ disabled, edited, labelName, errorText, icon, onIconClick, name, ...props }) => {
+  const hasError = edited && errorText;
   const iconToRender = useMemo(() => {
-    const resIcon = icon ? icon : (errorText ? excPoint: null);
+    const resIcon = icon ? icon : hasError ? excPoint : null;
     return resIcon ? (
       <div
-        className={`${input.icon} ${errorText && input.icon_error} ${disabled && input.icon_disabled}`}
+        className={`${input.icon} ${hasError && input.icon_error} ${disabled && input.icon_disabled}`}
         onClick={onIconClick}
         style={onIconClick && { cursor: 'pointer' }}>
         {resIcon}
@@ -17,17 +18,13 @@ const Input = ({ labelName, type, placeholder, onChange, name, value, disabled, 
   }, [icon, onIconClick, errorText]);
 
   return (
-    <Field name={name} labelName={labelName} errorText={errorText}>
+    <Field name={name} labelName={labelName} errorText={errorText} hasError={hasError}>
       <div className={input.wrapper}>
         <input
-          className={`${input.input} ${errorText && input.input_error}`}
-          type={type}
+          className={`${input.input} ${hasError && input.input_error}`}
           name={name}
-          placeholder={placeholder}
-          disabled={disabled}
-          onChange={onChange}
-          value={value}
           style={iconToRender && { paddingRight: '50px' }}
+          {...props}
         />
         {iconToRender}
       </div>
