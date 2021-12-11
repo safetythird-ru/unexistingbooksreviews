@@ -73,9 +73,9 @@ const Editor = (props) => {
 
   return (
       <FormikProvider value={formik}>
-      <Form errors={ props.errors ?  props.errors.concat(formik.errors): formik.errors } onSubmit={formik.handleSubmit}>
-        <BiggerFieldInput name="title" value={formik.values.title} placeholder="Article Title" onChange={formik.handleChange}/>
-        <FieldInput name="description" value={formik.values.description} placeholder="What's this article about?" onChange={formik.handleChange}/>
+      <Form errors={ props.errors } onSubmit={formik.handleSubmit}>
+        <BiggerFieldInput name="title" value={formik.values.title} placeholder="Article Title" onChange={formik.handleChange} error={formik.errors.title}/>
+        <FieldInput name="description" value={formik.values.description} placeholder="What's this article about?" onChange={formik.handleChange} error={formik.errors.description}/>
         <TextArea name="body" placeholder="Write your article (in markdown)">
           {formik.values.body}
         </TextArea>
@@ -102,9 +102,9 @@ const TextArea = (props) => (
 
 const FormFieldSet = ({children}) => (<fieldset className="form-group">{children}</fieldset>)
 
-const FieldInput = ({placeholder, name, value, onChange, children}) => (
+const FieldInput = ({placeholder, name, value, onChange, children, error}) => (
   <FormFieldSet>
-    <Input placeholder={placeholder} name={name} value={value} onChange={onChange}/>
+    <Input placeholder={placeholder} name={name} value={value} onChange={onChange} errorText={error}/>
     {children}
   </FormFieldSet>
 )
