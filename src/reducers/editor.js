@@ -23,7 +23,7 @@ export default (state = initState, action) => {
         tags: action.payload ? action.payload.article.tagList : []
       };
     case EDITOR_PAGE_UNLOADED:
-      return {};
+      return initState;
     case ARTICLE_SUBMITTED:
       return {
         ...state,
