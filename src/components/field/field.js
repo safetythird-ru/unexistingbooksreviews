@@ -1,13 +1,13 @@
 import field from './field.module.css';
 
-const Field = ({ children, name, labelName, errorText }) => {
+const Field = ({hasError, children, name, labelName, errorText }) => {
   return (
     <div className={field.container}>
       <label className={field.label} htmlFor={name}>
         {labelName}
       </label>
       {children}
-      {errorText && <span className={field.error_message}>{errorText}</span>}
+      {hasError && <span className={field.error_message}>{errorText}</span>}
     </div>
   );
 };
