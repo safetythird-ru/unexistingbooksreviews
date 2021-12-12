@@ -1,55 +1,75 @@
 .container {
-    font-family: 'Tomorrow', sans-serif;
-    display: flex;
-    flex-direction: column;
+  font-family: 'Tomorrow', sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
 .label {
-    font-family: inherit;
-    color: inherit;
-    font-size: 20px;
-    line-height: 24px;
-    margin-left: 10px;
-    margin-bottom: 4px;
+  font-family: inherit;
+  color: inherit;
+  font-size: 20px;
+  line-height: 24px;
+  margin-left: 10px;
+  margin-bottom: 4px;
 }
 
 .error_message {
-    font-family: inherit;
-    font-size: 18px;
-    line-height: 22px;
-    margin-left: 10px;
-    margin-top: 4px;
-    color: #E51A1A;
+  font-family: inherit;
+  font-size: 18px;
+  line-height: 22px;
+  margin-left: 10px;
+  margin-top: 4px;
+  color: #E51A1A;
 }
 
 /* Стиль непосредственно тегов input или textarea */
 .field {
-    font-family: inherit;
-    color: inherit;
-    background: rgba(200, 201, 189, 0.6);
-    box-sizing: border-box;
-    border-radius: 20px;
-    border: none;
-    font-size: 16px;
-    height: 40px;
-    padding-left: 16px;
-    padding-right: 16px;
-    width: 100%;
+  font-family: inherit;
+  color: inherit;
+  background: rgba(200, 201, 189, 0.6);
+  box-sizing: border-box;
+  border-radius: 20px;
+  border: none;
+  font-size: 16px;
+  height: 40px;
+  padding-left: 16px;
+  padding-right: 16px;
+  width: 100%;
+  border: 2px solid transparent;
 }
 
 .field:active, :hover, :focus {
-    outline: none;
-  }
-  
-.field::-webkit-input-placeholder {color:#6B6761; font-family:'EB Garamond', serif;}
-.field::-moz-placeholder          {color:#6B6761; font-family:'EB Garamond', serif;}
-.field:-moz-placeholder           {color:#6B6761; font-family:'EB Garamond', serif;}
-.field:-ms-input-placeholder      {color:#6B6761; font-family:'EB Garamond', serif;}
+  outline: none;
+}
+
+.field:focus {
+  border: 2px solid #000000
+}
+
+.field::-webkit-input-placeholder {
+  color: #6B6761;
+  font-family: 'EB Garamond', serif;
+}
+
+.field::-moz-placeholder {
+  color: #6B6761;
+  font-family: 'EB Garamond', serif;
+}
+
+.field:-moz-placeholder {
+  color: #6B6761;
+  font-family: 'EB Garamond', serif;
+}
+
+.field:-ms-input-placeholder {
+  color: #6B6761;
+  font-family: 'EB Garamond', serif;
+}
 
 .field_error {
-    border: 2px solid #E61A1A;
+  border: 2px solid #E61A1A;
 }
 
 .field_error:focus {
-    border: 2px solid #E61A1A;
+  border: 2px solid #E61A1A;
 }
