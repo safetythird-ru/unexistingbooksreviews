@@ -10,11 +10,12 @@ import {
 } from '../../constants/actionTypes';
 import Form from './form';
 import { useSelector } from 'react-redux';
-import { Field, FormikProvider, useFormik } from 'formik';
+import { FormikProvider, useFormik } from 'formik';
 import TagList from './tag-list';
 import PublishButton from './publish-button';
 import Input from '../field/input/input';
 import ButtonBase from '../button-base/button-base';
+import TextArea from '../field/text-area/text-area';
 
 const Editor = (props) => {
   const dispatch = useDispatch();
@@ -77,17 +78,6 @@ const Editor = (props) => {
       </FormikProvider>
   );
 }
-
-const TextArea = (props) => (
-  <FormFieldSet>
-    <Field
-      className="form-control"
-      {...props}
-      rows="8"
-      component="textarea"
-      />
-  </FormFieldSet>
-)
 
 const FormFieldSet = ({children}) => (<fieldset className="form-group">{children}</fieldset>)
 
